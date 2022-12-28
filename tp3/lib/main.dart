@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.pinkAccent,
       ),
-      home: demoimc(),
+      home: imc(),
     );
   }
 }
