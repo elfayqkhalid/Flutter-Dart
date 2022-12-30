@@ -1,165 +1,144 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 
-void main() => runApp(imc());
+void main() => runApp(Imc());
 
-class imc extends StatefulWidget {
+class Imc extends StatefulWidget {
   @override
   _DemoState createState() => _DemoState();
 }
 
-bool? isChecked = false;
-
-class _DemoState extends State<imc> {
+class _DemoState extends State<Imc> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
-  String resultat ="";
+  String resultat = 'Declarez vos données';
 
-
-
-
-  void initState() {
-    super.initState();
-    resetFields();
-  }
   void resetFields() {
     _weightController.text = '';
     _heightController.text = '';
     setState(() {
-      resultat = 'Entrez vos données';
+      resultat = 'Declarez vos données';
     });
   }
 
-  double _result = 0;
-  double _msgs = 0;
+  void calculerImc() {
+    double poids = double.parse(_weightController.text);
+    double taille = double.parse(_heightController.text) / 100.0;
+    double imc = (poids / pow(taille, 2));
+    setState(() {
+      resultat = "Votre IMC est : ${imc.toStringAsPrecision(2)}\n\n";
+      if (imc < 18.6)
+        resultat += "Poids très bas";
+      else if (imc >= 18.6 && imc < 24.9)
+        resultat += "Poids idéal";
+      else if (imc >= 24.9 && imc < 29.9)
+        resultat += "Surpoids";
+      else if (imc >= 29.9 && imc < 34.9)
+        resultat += "Obésité grade 1";
+      else if (imc >= 34.9 && imc < 39.9)
+        resultat += "Obésité grade 2";
+      else if (imc >= 40) resultat += "Obésité grade 3";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('BMI Calculator'),
+          title: const Text('Calculateur IMC'),
           centerTitle: true,
-          backgroundColor: Colors.pinkAccent,
+          backgroundColor: Colors.blue,
           actions: <Widget>[
             IconButton(
                 onPressed: () {
-                  _heightController.clear();
-                  _weightController.clear();
-                  _result = 0;
-                  setState(() {});
+
+                  resetFields();
                 },
-                icon: Icon(Icons.update))
+                icon: const Icon(Icons.update))
           ],
         ),
         body: SafeArea(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Column(
-              children: <Widget>[
-                TextField(
-                  controller: _heightController,
-                  keyboardType: TextInputType.number,
-
-                  decoration: InputDecoration(
-                    labelText: 'height in cm',
-                    icon: Icon(Icons.trending_up),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: <Widget>[
+                  const Icon(Icons.account_circle_rounded,
+                      color: Colors.blue, size: 200),
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    controller: _heightController,
+                    decoration: const InputDecoration(
+                      labelText: 'Taille cm',
+                    ),
                   ),
-                ),
-                SizedBox(height: 20),
-                TextField(
-                  controller: _weightController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'weight in kg',
-                    hintText: 'Entre Votre Poids en (kg)',
-                    icon: Icon(Icons.line_weight),
+                  const SizedBox(height: 20),
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    controller: _weightController,
+                    decoration: const InputDecoration(
+                      labelText: 'Poids (Kg)',
+                      hintText: "Entre Votre Poids en (kg)",
+                    ),
                   ),
-                ),
-                SizedBox(height: 15),
-                ElevatedButton(
-                  child: Text(
-                    "Calculate",
-                    style: TextStyle(color: Colors.white),
+                  const SizedBox(height: 15),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        calculerImc();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 150, vertical: 20),
+                        ),
+                    child: const Text(
+                      'Calculer',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      calculerImc();
-                    }
-                  },
-                ),
-                SizedBox(height: 15),
-                Text(
-                  _result == null
-                      ? "Enter Value"
-                      : "${_result.toStringAsFixed(2)}",
-                  style: TextStyle(
-                    color: Colors.redAccent,
-                    fontSize: 19.4,
-                    fontWeight: FontWeight.w500,
+                  SizedBox(height: 15),
+                  const Text(
+                    'Calculer',
+                    style: TextStyle(
+                      fontFamily: 'Sen',
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                //Text("${resultats(calculateBMI())}"),
-                //Text("message()"),
-                Text(
-                  _msgs == null ? "Enter Value" : "${_msgs.toStringAsFixed(3)}",
-                ),
-                Text(txt),
-
-                Checkbox(
-                    value: isChecked,
-                    activeColor: Colors.amber,
-                    tristate: true,
-                    onChanged: (newBool) {
-                      setState(() {
-                        isChecked = newBool;
-                      });
-                    }), //Text(resultat(_result)),
-              ],
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 30),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Text(
+                      resultat,
+                      style: const TextStyle(
+                        fontSize: 23.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
-
-  calculateBMI() {
-    double height = double.parse(_heightController.text) / 100;
-    double weight = double.parse(_weightController.text);
-
-    double heightSquare = height * height;
-    double result = weight / heightSquare;
-
-    double _result = result;
-    //_msgs = _result.toString();
-    //double _msgs = _result;
-
-    setState(() {});
-  }
-
-
-
-
-
-void calculerImc() {
-  double poids = double.parse(_weightController.text);
-  double taille = double.parse(_heightController.text) / 100.0;
-  double imc = (poids / pow(taille, 2));
-  setState(() {
-    resultat = "IMC = ${imc.toStringAsPrecision(2)}\n";
-    if (imc < 18.6)
-      resultat += "Poids très bas";
-    else if (imc >= 18.6 && imc < 24.9)
-      resultat += "Poids idéal";
-    else if (imc >= 24.9 && imc < 29.9)
-      resultat += "Surpoids";
-    else if (imc >= 29.9 && imc < 34.9)
-      resultat += "Obésité grade 1";
-    else if (imc >= 34.9 && imc < 39.9)
-      resultat += "Obésité grade 2";
-    else if(imc >= 40)
-      resultat += "Obésité grade 3";
-  });
 }
