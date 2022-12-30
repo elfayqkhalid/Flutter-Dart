@@ -54,7 +54,6 @@ class _DemoState extends State<Imc> {
           actions: <Widget>[
             IconButton(
                 onPressed: () {
-
                   resetFields();
                 },
                 icon: const Icon(Icons.update))
@@ -93,10 +92,10 @@ class _DemoState extends State<Imc> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 150, vertical: 20),
-                        ),
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 150, vertical: 20),
+                    ),
                     child: const Text(
                       'Calculer',
                       style: TextStyle(
